@@ -19,6 +19,7 @@ public class Data {
     @SerializedName("avatar")
     private String avatar;
 
+
     public int getId() {
         return id;
     }
@@ -38,6 +39,7 @@ public class Data {
     public String getAvatar() {
         return avatar;
     }
+
 
     @Override
     public String toString() {

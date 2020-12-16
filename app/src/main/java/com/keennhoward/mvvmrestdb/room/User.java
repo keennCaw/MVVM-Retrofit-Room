@@ -1,10 +1,12 @@
 package com.keennhoward.mvvmrestdb.room;
 
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 @Entity(tableName = "user_table")
 public class User {
 
+    @PrimaryKey
     private int id;
 
     private String email;

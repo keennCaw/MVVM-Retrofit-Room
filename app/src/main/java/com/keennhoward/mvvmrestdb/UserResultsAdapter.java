@@ -42,7 +42,7 @@ public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         String name = this.userList.get(position).getLast_name() + ", " + this.userList.get(position).getFirst_name();
-        holder.idTextView.setText(this.userList.get(position).getId());
+        holder.idTextView.setText(String.valueOf(this.userList.get(position).getId()));
         holder.nameTextView.setText(name);
         holder.emailTextView.setText(this.userList.get(position).getEmail());
 

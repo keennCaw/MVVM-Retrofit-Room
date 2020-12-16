@@ -34,10 +34,10 @@ public class UserViewModel extends AndroidViewModel {
 
     private LiveData<List<Data>> userResponseLiveData;
 
-    /*public void init(){
+    public void init(){
+        //userResponseLiveData = repository.getDataResponseLiveData();
         repository.makeApiCall();
-        userResponseLiveData = repository.getDataResponseLiveData();
-    }*/
+    }
 
     public LiveData<List<Data>> getUserResponseLiveData(){
         return userResponseLiveData;
