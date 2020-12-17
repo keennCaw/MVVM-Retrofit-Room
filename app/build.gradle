@@ -21,7 +21,7 @@ android {
         }
     }
 
-    compileOptions{
+    compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -32,6 +32,11 @@ dependencies {
 
     def lifecycle_version = "2.2.0"
     def room_version = "2.2.5"
+    def nav_version = "2.3.2"
+
+    // Java language implementation Navigation component
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
 
     // CardView
     implementation "androidx.cardview:cardview:1.0.0"
@@ -42,6 +47,7 @@ dependencies {
     // LiveData
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
     // Annotation processor
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$lifecycle_version"
 
     // Room

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/usersFragment"
+        android:icon="@drawable/ic_person_black_24dp"
+        android:title="Users" />
+    <item
+        android:id="@+id/savedUsersFragment"
+        android:icon="@drawable/ic_save_black_24dp"
+        android:title="Saved Users"/>
+    <item
+        android:id="@+id/addEditUserFragment"
+        android:icon="@drawable/ic_person_add_black_24dp"
+        android:title="Add User"/>
+</menu>

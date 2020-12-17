@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/usersFragment">
+
+    <fragment
+        android:id="@+id/usersFragment"
+        android:name="com.keennhoward.mvvmrestdb.fragment.UsersFragment"
+        android:label="fragment_users"
+        tools:layout="@layout/fragment_users" />
+    <fragment
+        android:id="@+id/savedUsersFragment"
+        android:name="com.keennhoward.mvvmrestdb.fragment.SavedUsersFragment"
+        android:label="fragment_saved_users"
+        tools:layout="@layout/fragment_saved_users" />
+    <fragment
+        android:id="@+id/addEditUserFragment"
+        android:name="com.keennhoward.mvvmrestdb.fragment.AddEditUserFragment"
+        android:label="fragment_add_edit_user"
+        tools:layout="@layout/fragment_add_edit_user" />
+</navigation>
