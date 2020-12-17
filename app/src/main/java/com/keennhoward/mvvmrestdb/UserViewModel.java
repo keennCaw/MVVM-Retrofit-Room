@@ -36,7 +36,11 @@ public class UserViewModel extends AndroidViewModel {
 
     public void init(){
         //userResponseLiveData = repository.getDataResponseLiveData();
-        repository.makeApiCall();
+        repository.getUsersApiCall();
+    }
+
+    public void deleteUser(int id){
+        repository.deleteUserApiCall(id);
     }
 
     public LiveData<List<Data>> getUserResponseLiveData(){

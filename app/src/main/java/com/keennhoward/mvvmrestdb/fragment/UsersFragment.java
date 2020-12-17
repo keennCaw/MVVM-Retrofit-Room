@@ -2,10 +2,12 @@ package com.keennhoward.mvvmrestdb.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,6 +60,20 @@ public class UsersFragment extends Fragment {
             }
         });
         userViewModel.init();
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                userViewModel.deleteUser(userResultsAdapter.getDataAt(viewHolder.getAdapterPosition()).getId());
+                userResultsAdapter.notifyDataSetChanged();
+            }
+        }).attachToRecyclerView(usersRecyclerView);
+
         return v;
     }
 }

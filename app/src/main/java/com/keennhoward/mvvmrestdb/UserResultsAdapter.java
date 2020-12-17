@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.keennhoward.mvvmrestdb.model.Data;
 
@@ -48,8 +49,13 @@ public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.
 
         Glide.with(context)
                 .load(this.userList.get(position).getAvatar())
-                .apply(RequestOptions.centerCropTransform())
+                //.apply(RequestOptions.centerCropTransform())
+                .apply(RequestOptions.circleCropTransform())
                 .into(holder.avatarImageView);
+    }
+
+    public Data getDataAt(int position){
+        return userList.get(position);
     }
 
     @Override

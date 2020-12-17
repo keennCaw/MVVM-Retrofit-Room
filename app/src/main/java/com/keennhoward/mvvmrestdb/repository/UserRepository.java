@@ -3,6 +3,7 @@ package com.keennhoward.mvvmrestdb.repository;
 import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -26,8 +27,9 @@ public class UserRepository {
 
     //API
     private MutableLiveData<List<Data>> dataList;
+    private Application app;
 
-    public void makeApiCall(){
+    public void getUsersApiCall(){
         APIService apiService = RetroInstance.getRetroClient().create(APIService.class);
         Call<Users> call = apiService.getUsers();
         call.enqueue(new Callback<Users>() {
@@ -47,6 +49,22 @@ public class UserRepository {
         });
     }
 
+    public void deleteUserApiCall(int id){
+        APIService apiService = RetroInstance.getRetroClient().create(APIService.class);
+        Call<Void> call = apiService.deleteUser(id);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Toast.makeText(app, "User Deleted Code:" + response.code(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Error Delete", t.getMessage());
+            }
+        });
+    }
+
     public LiveData<List<Data>> getDataResponseLiveData(){
         return dataList;
     }
@@ -56,6 +74,7 @@ public class UserRepository {
     public UserRepository(Application application){
         dataList = new MutableLiveData<>();
         UserDatabase database = UserDatabase.getInstance(application);
+        app = application;
 
         userDao = database.userDao();
         allUsers = userDao.getAllUsers();
