@@ -19,6 +19,8 @@ import com.keennhoward.mvvmrestdb.room.User;
 
 public class SavedUsersAdapter extends ListAdapter<User, SavedUsersAdapter.UserHolder> {
 
+    private OnItemClickListener listener;
+
     private Context context;
     public SavedUsersAdapter(Context context) {
         super(DIFF_CALLBACK);
@@ -83,6 +85,25 @@ public class SavedUsersAdapter extends ListAdapter<User, SavedUsersAdapter.UserH
             idTextView = itemView.findViewById(R.id.user_item_id);
             emailTextView = itemView.findViewById(R.id.user_item_email);
             avatarImageView = itemView.findViewById(R.id.user_item_avatar);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+
+                    if(listener != null && position != RecyclerView.NO_POSITION){
+                        listener.onItemClick(getItem(position));
+                    }
+                }
+            });
         }
+    }
+
+    public interface OnItemClickListener{
+        void onItemClick(User user);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener = listener;
     }
 }

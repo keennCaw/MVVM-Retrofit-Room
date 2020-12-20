@@ -30,7 +30,6 @@ public class SavedUsersFragment extends Fragment {
 
     private SavedUsersViewModel savedUsersViewModel;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
