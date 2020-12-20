@@ -5,6 +5,7 @@ import com.keennhoward.mvvmrestdb.model.Users;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface APIService {
@@ -14,4 +15,5 @@ public interface APIService {
 
     @DELETE("api/users/{id}")
     Call<Void> deleteUser(@Path("id") int id);
+
 }

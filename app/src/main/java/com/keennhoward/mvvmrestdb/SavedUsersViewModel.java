@@ -24,12 +24,6 @@ public class SavedUsersViewModel extends AndroidViewModel {
         allUsers = repository.getAllUsers();
     }
 
-    public void insert(User user){
-        repository.insert(user);
-    }
-    public void update(User user){
-        repository.update(user);
-    }
     public void delete(User user){
         repository.delete(user);
     }
