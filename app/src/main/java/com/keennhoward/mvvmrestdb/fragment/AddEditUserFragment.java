@@ -38,17 +38,27 @@ public class AddEditUserFragment extends Fragment {
 
     private AddEditViewModel viewModel;
 
-    EditText idEditText;
-    EditText firstNameEditText;
-    EditText lastNameEditText;
-    EditText emailEditText;
-    ImageView avatarImageView;
-    Button saveButton;
+    private EditText idEditText;
+    private EditText firstNameEditText;
+    private EditText lastNameEditText;
+    private EditText emailEditText;
+    private ImageView avatarImageView;
+    private Button saveButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        getActivity().setTitle("Add/Edit User");
+
+        int savedID = AddEditUserFragmentArgs.fromBundle(getArguments()).getId();
+        String fName = AddEditUserFragmentArgs.fromBundle(getArguments()).getFirstName();
+        String lName = AddEditUserFragmentArgs.fromBundle(getArguments()).getLastName();
+        String email = AddEditUserFragmentArgs.fromBundle(getArguments()).getEmail();
+
+
+        Log.d("ID", String.valueOf(savedID)+ fName);
+
         View v = inflater.inflate(R.layout.fragment_add_edit_user, container, false);
 
         idEditText = v.findViewById(R.id.id_edit_text);
@@ -57,6 +67,20 @@ public class AddEditUserFragment extends Fragment {
         emailEditText = v.findViewById(R.id.email_edit_text);
         avatarImageView = v.findViewById(R.id.add_avatar_image_view);
         saveButton = v.findViewById(R.id.save_user_button);
+
+        if(savedID != 0){
+            selectedImage = AddEditUserFragmentArgs.fromBundle(getArguments()).getAvatar();
+            idEditText.setText(String.valueOf(savedID));
+            idEditText.setEnabled(false);
+            firstNameEditText.setText(fName);
+            lastNameEditText.setText(lName);
+            emailEditText.setText(email);
+
+            Glide.with(getContext())
+                    .load(selectedImage)
+                    .transform(new CircleCrop())
+                    .into(avatarImageView);
+        }
 
         viewModel = new ViewModelProvider(getActivity(), ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(AddEditViewModel.class);
 
@@ -74,7 +98,11 @@ public class AddEditUserFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUser();
+                if(savedID == 0) {
+                    saveUser();
+                }else {
+                    updateUser();
+                }
             }
         });
 
@@ -106,7 +134,7 @@ public class AddEditUserFragment extends Fragment {
         String lastName = lastNameEditText.getText().toString();
         String email = emailEditText.getText().toString();
 
-        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim().isEmpty() || String.valueOf(id).trim().isEmpty()){
+        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim().isEmpty() || String.valueOf(id).trim().isEmpty()|| id == 0){
             Toast.makeText(getContext(), "Please Complete Fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -118,5 +146,25 @@ public class AddEditUserFragment extends Fragment {
         viewModel.insert(user);
 
         Toast.makeText(getActivity(), "User Saved", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateUser(){
+        int id = Integer.parseInt(idEditText.getText().toString());
+        String firstName = firstNameEditText.getText().toString();
+        String lastName = lastNameEditText.getText().toString();
+        String email = emailEditText.getText().toString();
+
+        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim().isEmpty() || String.valueOf(id).trim().isEmpty()|| id == 0){
+            Toast.makeText(getContext(), "Please Complete Fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        User user = new User(id,email,firstName,lastName,selectedImage);
+
+        Log.d("user", user.toString());
+
+        viewModel.update(user);
+
+        Toast.makeText(getActivity(), "User Updated", Toast.LENGTH_SHORT).show();
     }
 }

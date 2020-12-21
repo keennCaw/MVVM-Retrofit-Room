@@ -30,7 +30,7 @@ public class UserDBRepository {
         new DeleteUserAsyncTask(userDao).execute(user);
     }
     public void deleteAllUsers(){
-        new DeleteAllUsersAsyncTask(userDao);
+        new DeleteAllUsersAsyncTask(userDao).execute();
     }
 
     public LiveData<List<User>> getAllUsers(){

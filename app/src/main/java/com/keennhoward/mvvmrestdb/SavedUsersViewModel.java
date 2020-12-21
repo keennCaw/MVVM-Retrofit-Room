@@ -27,7 +27,7 @@ public class SavedUsersViewModel extends AndroidViewModel {
     public void delete(User user){
         repository.delete(user);
     }
-    public void deleteAllUsers(User user){
+    public void deleteAllUsers(){
         repository.deleteAllUsers();
     }
 

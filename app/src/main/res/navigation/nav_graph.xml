@@ -18,10 +18,33 @@
         android:id="@+id/savedUsersFragment"
         android:name="com.keennhoward.mvvmrestdb.fragment.SavedUsersFragment"
         android:label="fragment_saved_users"
-        tools:layout="@layout/fragment_saved_users" />
+        tools:layout="@layout/fragment_saved_users" >
+        <action
+            android:id="@+id/navigateToAddEditFragment"
+            app:destination="@id/addEditUserFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addEditUserFragment"
         android:name="com.keennhoward.mvvmrestdb.fragment.AddEditUserFragment"
         android:label="fragment_add_edit_user"
-        tools:layout="@layout/fragment_add_edit_user" />
+        tools:layout="@layout/fragment_add_edit_user" >
+        <argument
+            android:name="id"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="firstName"
+            app:argType="string"
+            android:defaultValue="error" />
+        <argument
+            android:name="lastName"
+            app:argType="string"
+            android:defaultValue="error" />
+        <argument android:name="email"
+            app:argType="string"
+            android:defaultValue="error" />
+        <argument android:name="avatar"
+            app:argType="string"
+            android:defaultValue="error" />
+    </fragment>
 </navigation>

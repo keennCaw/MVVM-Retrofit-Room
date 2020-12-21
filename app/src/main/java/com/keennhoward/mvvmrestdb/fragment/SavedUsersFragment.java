@@ -7,22 +7,24 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.keennhoward.mvvmrestdb.R;
 import com.keennhoward.mvvmrestdb.SavedUsersAdapter;
 import com.keennhoward.mvvmrestdb.SavedUsersViewModel;
-import com.keennhoward.mvvmrestdb.UserViewModel;
 import com.keennhoward.mvvmrestdb.room.User;
 
 import java.util.List;
@@ -37,6 +39,7 @@ public class SavedUsersFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_saved_users, container, false);
+        getActivity().setTitle("Saved Users");
 
         RecyclerView recyclerView = v.findViewById(R.id.saved_users_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(v.getContext()));
@@ -67,6 +70,22 @@ public class SavedUsersFragment extends Fragment {
             }
         }).attachToRecyclerView(recyclerView);
 
+        savedUsersAdapter.setOnItemClickListener(new SavedUsersAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(User user) {
+
+                SavedUsersFragmentDirections.NavigateToAddEditFragment action = SavedUsersFragmentDirections.navigateToAddEditFragment();
+                action.setId(user.getId());
+                action.setFirstName(user.getFirst_name());
+                action.setLastName(user.getLast_name());
+                action.setEmail(user.getEmail());
+                action.setAvatar(user.getAvatar());
+
+                Navigation.findNavController(v).navigate(action);
+                Log.d("id", String.valueOf(user.getId()));
+            }
+        });
+
         return v;
     }
 
@@ -85,6 +104,13 @@ public class SavedUsersFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         //add Delete All Users from DB
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()){
+            case R.id.delete_all_users:
+                savedUsersViewModel.deleteAllUsers();
+                Toast.makeText(getContext(), "All Users Deleted", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
