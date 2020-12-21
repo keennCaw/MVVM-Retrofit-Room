@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -72,6 +73,7 @@ public class AddEditUserFragment extends Fragment {
             selectedImage = AddEditUserFragmentArgs.fromBundle(getArguments()).getAvatar();
             idEditText.setText(String.valueOf(savedID));
             idEditText.setEnabled(false);
+            idEditText.setVisibility(View.VISIBLE);
             firstNameEditText.setText(fName);
             lastNameEditText.setText(lName);
             emailEditText.setText(email);
@@ -80,6 +82,8 @@ public class AddEditUserFragment extends Fragment {
                     .load(selectedImage)
                     .transform(new CircleCrop())
                     .into(avatarImageView);
+        }else{
+            idEditText.setVisibility(View.GONE);
         }
 
         viewModel = new ViewModelProvider(getActivity(), ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(AddEditViewModel.class);
@@ -100,8 +104,10 @@ public class AddEditUserFragment extends Fragment {
             public void onClick(View v) {
                 if(savedID == 0) {
                     saveUser();
+                    Navigation.findNavController(v).navigate(R.id.navigateAddEditToSaved);
                 }else {
-                    updateUser();
+                    updateUser(savedID);
+                    Navigation.findNavController(v).navigate(R.id.navigateAddEditToSaved);
                 }
             }
         });
@@ -109,6 +115,7 @@ public class AddEditUserFragment extends Fragment {
         return v;
 
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -129,17 +136,16 @@ public class AddEditUserFragment extends Fragment {
     }
 
     private void saveUser(){
-        int id = Integer.parseInt(idEditText.getText().toString());
         String firstName = firstNameEditText.getText().toString();
         String lastName = lastNameEditText.getText().toString();
         String email = emailEditText.getText().toString();
 
-        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim().isEmpty() || String.valueOf(id).trim().isEmpty()|| id == 0){
+        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim().isEmpty()){
             Toast.makeText(getContext(), "Please Complete Fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        User user = new User(id,email,firstName,lastName,selectedImage);
+        User user = new User(email,firstName,lastName,selectedImage);
 
         Log.d("user", user.toString());
 
@@ -148,23 +154,25 @@ public class AddEditUserFragment extends Fragment {
         Toast.makeText(getActivity(), "User Saved", Toast.LENGTH_SHORT).show();
     }
 
-    private void updateUser(){
-        int id = Integer.parseInt(idEditText.getText().toString());
+    private void updateUser(int id){
         String firstName = firstNameEditText.getText().toString();
         String lastName = lastNameEditText.getText().toString();
         String email = emailEditText.getText().toString();
 
-        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim().isEmpty() || String.valueOf(id).trim().isEmpty()|| id == 0){
+        if(firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim().isEmpty()){
             Toast.makeText(getContext(), "Please Complete Fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        User user = new User(id,email,firstName,lastName,selectedImage);
+        User user = new User(email,firstName,lastName,selectedImage);
+        user.setId(id);
 
         Log.d("user", user.toString());
 
         viewModel.update(user);
 
         Toast.makeText(getActivity(), "User Updated", Toast.LENGTH_SHORT).show();
+
+
     }
 }

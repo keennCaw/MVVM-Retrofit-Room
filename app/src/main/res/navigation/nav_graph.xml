@@ -46,5 +46,8 @@
         <argument android:name="avatar"
             app:argType="string"
             android:defaultValue="error" />
+        <action
+            android:id="@+id/navigateAddEditToSaved"
+            app:destination="@id/savedUsersFragment" />
     </fragment>
 </navigation>

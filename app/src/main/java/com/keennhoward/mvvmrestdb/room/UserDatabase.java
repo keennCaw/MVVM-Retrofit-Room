@@ -47,8 +47,8 @@ private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void>{
     @Override
     protected Void doInBackground(Void... voids) {
 
-        userDao.insert(new User(222,"GGWP@gmail.com", "Keenn Howard", "Caw", "https://reqres.in/img/faces/11-image.jpg"));
-        userDao.insert(new User(111,"DFcked@gmail.com", "Ozzy Man", "YT", "https://reqres.in/img/faces/12-image.jpg"));
+        userDao.insert(new User("GGWP@gmail.com", "Keenn Howard", "Caw", "https://reqres.in/img/faces/11-image.jpg"));
+        userDao.insert(new User("DFcked@gmail.com", "Ozzy Man", "YT", "https://reqres.in/img/faces/12-image.jpg"));
         return null;
     }
 }
