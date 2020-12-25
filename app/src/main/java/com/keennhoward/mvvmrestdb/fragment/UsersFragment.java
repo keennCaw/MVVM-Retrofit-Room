@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.keennhoward.mvvmrestdb.R;
 import com.keennhoward.mvvmrestdb.UserResultsAdapter;
 import com.keennhoward.mvvmrestdb.UserViewModel;
 import com.keennhoward.mvvmrestdb.model.Data;
+import com.keennhoward.mvvmrestdb.room.User;
 
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class UsersFragment extends Fragment {
     private List<Data> userList;
     private UserViewModel userViewModel;
     private TextView noResultTextView;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,6 +79,19 @@ public class UsersFragment extends Fragment {
                 userResultsAdapter.notifyDataSetChanged();
             }
         }).attachToRecyclerView(usersRecyclerView);
+
+
+        userResultsAdapter.setOnItemClickedListener(new UserResultsAdapter.onItemClicked() {
+            @Override
+            public void onItemClick(Data data) {
+                Log.d("Data", data.toString());
+
+                User user = new User(data.getEmail(),data.getFirst_name(),data.getLast_name(),data.getAvatar());
+                user.setId(data.getId());
+
+                userViewModel.insertApiUser(user);
+            }
+        });
 
         return v;
     }

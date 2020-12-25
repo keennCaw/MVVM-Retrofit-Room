@@ -31,6 +31,8 @@ public class UserViewModel extends AndroidViewModel {
         repository.getUsersApiCall();
     }
 
+    public void insertApiUser(User user){ repository.insertApiUser(user);}
+
     public void deleteUser(int id){
         repository.deleteUserApiCall(id);
     }

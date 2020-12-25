@@ -14,11 +14,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.keennhoward.mvvmrestdb.model.Data;
+import com.keennhoward.mvvmrestdb.room.User;
 
 import java.util.List;
 
 public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.MyViewHolder> {
 
+    private onItemClicked listener;
     private Context context;
     private List<Data> userList;
 
@@ -67,11 +69,14 @@ public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.
         return 0;
     }
 
+
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         ImageView avatarImageView;
         TextView emailTextView;
         TextView idTextView;
+        ImageView addUserImageView;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +84,23 @@ public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.
             avatarImageView = itemView.findViewById(R.id.user_item_avatar);
             nameTextView = itemView.findViewById(R.id.user_item_name);
             idTextView = itemView.findViewById(R.id.user_item_id);
+            addUserImageView = itemView.findViewById(R.id.user_item_save_user);
+
+            addUserImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+
+                    if(listener != null && position != RecyclerView.NO_POSITION){
+                        listener.onItemClick(userList.get(position));
+                    }
+                }
+            });
         }
     }
+    public interface onItemClicked{
+        void onItemClick(Data data);
+    }
+
+    public void setOnItemClickedListener(onItemClicked listener){this.listener = listener;}
 }

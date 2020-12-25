@@ -21,13 +21,17 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class UserAPIRepository {
+
+    public Boolean dataCheck = false;
 
     //API
     private MutableLiveData<List<Data>> dataList;
     private Application app;
+
+    //DB
+    private UserDao userDao;
 
     public void getUsersApiCall(){
         APIService apiService = RetroInstance.getRetroClient().create(APIService.class);
@@ -47,6 +51,10 @@ public class UserAPIRepository {
                 Log.d("error", t.getMessage());
             }
         });
+    }
+
+    public void selectUser(int id){
+
     }
 
     public void deleteUserApiCall(int id){
@@ -69,11 +77,72 @@ public class UserAPIRepository {
         return dataList;
     }
 
+    public void insert(User user){
+        new UserAPIRepository.InsertUserWithIdAsyncTask(userDao).execute(user);
+    }
+
+    public void insertApiUser(User user){
+        new UserAPIRepository.InsertOrUpdateUser(userDao).execute(user);
+    }
+
 
     //constructor
     public UserAPIRepository(Application application){
+        //DB
+        UserDatabase database = UserDatabase.getInstance(application);
+        userDao = database.userDao();
+
         dataList = new MutableLiveData<>();
         app = application;
 
+    }
+
+    private class InsertOrUpdateUser extends AsyncTask<User,Void,Boolean>{
+        private UserDao userDao;
+        //private User resultUser;
+        private User inputUser;
+
+        public InsertOrUpdateUser(UserDao userDao) {
+            this.userDao = userDao;
+        }
+
+        @Override
+        protected Boolean doInBackground(User... users) {
+            inputUser = users[0];
+            //resultUser = userDao.getUserWithId(users[0].getId());
+            if(userDao.getUserWithId(inputUser.getId()) != null) {
+                return true;
+            }else {
+                return false;
+            }
+        }
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if (aBoolean){
+
+            }else{
+                insert(inputUser);
+            }
+        }
+    }
+
+    private class InsertUserWithIdAsyncTask extends AsyncTask<User,Void,Void> {
+        private UserDao userDao;
+
+        public InsertUserWithIdAsyncTask(UserDao userDao) {
+            this.userDao = userDao;
+        }
+
+        @Override
+        protected Void doInBackground(User... users) {
+
+            userDao.insert(users[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+        }
     }
 }
