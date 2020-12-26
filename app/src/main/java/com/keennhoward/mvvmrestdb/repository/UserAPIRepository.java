@@ -81,6 +81,10 @@ public class UserAPIRepository {
         new UserAPIRepository.InsertUserWithIdAsyncTask(userDao).execute(user);
     }
 
+    public void update(User user){
+        new UserAPIRepository.UpdateUserWithIdAsyncTask(userDao).execute(user);
+    }
+
     public void insertApiUser(User user){
         new UserAPIRepository.InsertOrUpdateUser(userDao).execute(user);
     }
@@ -119,7 +123,7 @@ public class UserAPIRepository {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean){
-
+                update(inputUser);
             }else{
                 insert(inputUser);
             }
@@ -143,6 +147,21 @@ public class UserAPIRepository {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+        }
+    }
+
+    private class UpdateUserWithIdAsyncTask extends AsyncTask<User,Void,Void> {
+        private UserDao userDao;
+
+        public UpdateUserWithIdAsyncTask(UserDao userDao) {
+            this.userDao = userDao;
+        }
+
+        @Override
+        protected Void doInBackground(User... users) {
+
+            userDao.update(users[0]);
+            return null;
         }
     }
 }
