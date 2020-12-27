@@ -20,7 +20,16 @@ public class UserViewModel extends AndroidViewModel {
         super(application);
         repository = new UserAPIRepository(application);
         userResponseLiveData = repository.getDataResponseLiveData();
+        message = repository.getMessage();
     }
+
+    //Test
+    private LiveData<String> message;
+    public LiveData<String> getMessage(){
+        return message;
+    }
+
+
 
     //API repository
 

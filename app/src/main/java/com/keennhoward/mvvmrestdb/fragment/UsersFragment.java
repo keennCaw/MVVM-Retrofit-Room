@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.keennhoward.mvvmrestdb.R;
 import com.keennhoward.mvvmrestdb.UserResultsAdapter;
@@ -65,6 +66,14 @@ public class UsersFragment extends Fragment {
                 }
             }
         });
+        userViewModel.getMessage().observe(getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Log.d("Observed Value", s);
+                Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         userViewModel.init();
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {

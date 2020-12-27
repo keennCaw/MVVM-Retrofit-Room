@@ -28,6 +28,13 @@ public class UserAPIRepository {
 
     //API
     private MutableLiveData<List<Data>> dataList;
+
+
+    //TEST
+    private MutableLiveData<String> message;
+
+
+
     private Application app;
 
     //DB
@@ -77,6 +84,12 @@ public class UserAPIRepository {
         return dataList;
     }
 
+    //TEST
+    public LiveData<String> getMessage(){
+        return message;
+    }
+
+
     public void insert(User user){
         new UserAPIRepository.InsertUserWithIdAsyncTask(userDao).execute(user);
     }
@@ -97,6 +110,10 @@ public class UserAPIRepository {
         userDao = database.userDao();
 
         dataList = new MutableLiveData<>();
+
+        //Test
+        message = new MutableLiveData<>("no Message");
+
         app = application;
 
     }
@@ -124,8 +141,12 @@ public class UserAPIRepository {
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean){
                 update(inputUser);
+                //Test
+                message.setValue("Updated User: " + inputUser.getId());
             }else{
                 insert(inputUser);
+                //Test
+                message.setValue("Saved User: " + inputUser.getId());
             }
         }
     }
