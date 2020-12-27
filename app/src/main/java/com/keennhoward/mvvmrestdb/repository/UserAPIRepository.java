@@ -100,6 +100,9 @@ public class UserAPIRepository {
         new UserAPIRepository.InsertOrUpdateUser(userDao).execute(user);
     }
 
+    public void reInitMessage(){
+        message.setValue("null");
+    }
 
     //constructor
     public UserAPIRepository(Application application){

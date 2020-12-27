@@ -31,6 +31,7 @@ public class UserViewModel extends AndroidViewModel {
 
 
 
+
     //API repository
 
     private LiveData<List<Data>> userResponseLiveData;
@@ -38,6 +39,7 @@ public class UserViewModel extends AndroidViewModel {
     public void init(){
         //userResponseLiveData = repository.getDataResponseLiveData();
         repository.getUsersApiCall();
+        repository.reInitMessage();
     }
 
     public void insertApiUser(User user){ repository.insertApiUser(user);}

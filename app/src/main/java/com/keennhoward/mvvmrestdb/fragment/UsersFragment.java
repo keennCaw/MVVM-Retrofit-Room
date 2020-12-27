@@ -66,6 +66,9 @@ public class UsersFragment extends Fragment {
                 }
             }
         });
+
+        userViewModel.init();
+
         userViewModel.getMessage().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
@@ -76,7 +79,7 @@ public class UsersFragment extends Fragment {
             }
         });
 
-        userViewModel.init();
+
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
