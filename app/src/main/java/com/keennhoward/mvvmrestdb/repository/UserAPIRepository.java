@@ -24,8 +24,6 @@ import retrofit2.Response;
 
 public class UserAPIRepository {
 
-    public Boolean dataCheck = false;
-
     //API
     private MutableLiveData<List<Data>> dataList;
 
@@ -60,7 +58,7 @@ public class UserAPIRepository {
         });
     }
 
-    public void selectUser(int id){
+    public void searchUser(int id){
 
     }
 
@@ -70,12 +68,12 @@ public class UserAPIRepository {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                Toast.makeText(app, "User Deleted Code:" + response.code(), Toast.LENGTH_SHORT).show();
+                message.setValue("User Deleted Code:" + response.code());
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("Error Delete", t.getMessage());
+                message.setValue("Check Network Connection");
             }
         });
     }
@@ -112,7 +110,7 @@ public class UserAPIRepository {
         dataList = new MutableLiveData<>();
 
         //Test
-        message = new MutableLiveData<>("no Message");
+        message = new MutableLiveData<>("null");
 
         app = application;
 

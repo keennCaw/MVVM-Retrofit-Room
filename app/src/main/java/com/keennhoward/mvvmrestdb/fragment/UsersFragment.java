@@ -54,7 +54,7 @@ public class UsersFragment extends Fragment {
 
         userViewModel = new ViewModelProvider(getActivity(), ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(UserViewModel.class);
 
-        userViewModel.getUserResponseLiveData().observe(getActivity(), new Observer<List<Data>>() {
+        userViewModel.getUserResponseLiveData().observe(getViewLifecycleOwner(), new Observer<List<Data>>() {
             @Override
             public void onChanged(List<Data> data) {
                 if(data != null){
@@ -66,11 +66,13 @@ public class UsersFragment extends Fragment {
                 }
             }
         });
-        userViewModel.getMessage().observe(getActivity(), new Observer<String>() {
+        userViewModel.getMessage().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 Log.d("Observed Value", s);
-                Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
+                if(s.equals("null")){ }
+                else{
+                Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();}
             }
         });
 
