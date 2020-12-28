@@ -21,6 +21,10 @@ public class UserViewModel extends AndroidViewModel {
         repository = new UserAPIRepository(application);
         userResponseLiveData = repository.getDataResponseLiveData();
         message = repository.getMessage();
+
+
+        searchedUser = repository.getSearchedUser();
+
     }
 
     //Test
@@ -28,6 +32,10 @@ public class UserViewModel extends AndroidViewModel {
     public LiveData<String> getMessage(){
         return message;
     }
+
+    private LiveData<User> searchedUser;
+
+    public LiveData<User> getSearchedUser(){return searchedUser;}
 
 
 
@@ -39,16 +47,24 @@ public class UserViewModel extends AndroidViewModel {
     public void init(){
         //userResponseLiveData = repository.getDataResponseLiveData();
         repository.getUsersApiCall();
-        repository.reInitMessage();
+
+        repository.reInitRepositoryVariables();
     }
 
     public void insertApiUser(User user){ repository.insertApiUser(user);}
+
+    public void insertUserDB(User user){ repository.insert(user);}
 
     public void deleteUser(int id){
         repository.deleteUserApiCall(id);
     }
 
+    public void searchUser(User user){ repository.searchUserDB(user);}
+
+    public void updateUserDB(User user){repository.update(user);}
+
     public LiveData<List<Data>> getUserResponseLiveData(){
         return userResponseLiveData;
     }
+
 }

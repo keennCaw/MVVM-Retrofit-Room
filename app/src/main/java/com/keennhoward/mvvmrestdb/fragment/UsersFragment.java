@@ -1,5 +1,8 @@
 package com.keennhoward.mvvmrestdb.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,6 +36,7 @@ public class UsersFragment extends Fragment {
     private UserViewModel userViewModel;
     private TextView noResultTextView;
 
+    private User user;
 
 
     @Override
@@ -79,6 +83,18 @@ public class UsersFragment extends Fragment {
             }
         });
 
+        userViewModel.getSearchedUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                if(user == null){
+                    Log.d("searched user", "null");
+                }else{
+                    Log.d("searched user", "user " + user.getId());
+                    createUpdateDialog(user).show();
+                }
+            }
+        });
+
 
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -95,18 +111,40 @@ public class UsersFragment extends Fragment {
         }).attachToRecyclerView(usersRecyclerView);
 
 
+
+
         userResultsAdapter.setOnItemClickedListener(new UserResultsAdapter.onItemClicked() {
             @Override
             public void onItemClick(Data data) {
                 Log.d("Data", data.toString());
 
-                User user = new User(data.getEmail(),data.getFirst_name(),data.getLast_name(),data.getAvatar());
+                user = new User(data.getEmail(),data.getFirst_name(),data.getLast_name(),data.getAvatar());
                 user.setId(data.getId());
 
+                userViewModel.searchUser(user);
                 userViewModel.insertApiUser(user);
             }
         });
 
         return v;
     }
+
+    public Dialog createUpdateDialog(User user){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("User Already Exists")
+                .setPositiveButton("Update", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userViewModel.updateUserDB(user);
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+        return builder.create();
+    }
+
 }

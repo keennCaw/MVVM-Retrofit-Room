@@ -3,7 +3,6 @@ package com.keennhoward.mvvmrestdb.repository;
 import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -27,10 +26,11 @@ public class UserAPIRepository {
     //API
     private MutableLiveData<List<Data>> dataList;
 
-
-    //TEST
     private MutableLiveData<String> message;
 
+
+    //TEST
+    private MutableLiveData<User> searchedUser;
 
 
     private Application app;
@@ -82,6 +82,10 @@ public class UserAPIRepository {
         return dataList;
     }
 
+    public MutableLiveData<User> getSearchedUser() {
+        return searchedUser;
+    }
+
     //TEST
     public LiveData<String> getMessage(){
         return message;
@@ -89,19 +93,24 @@ public class UserAPIRepository {
 
 
     public void insert(User user){
-        new UserAPIRepository.InsertUserWithIdAsyncTask(userDao).execute(user);
+        new InsertUserDBAsyncTask(userDao).execute(user);
     }
 
     public void update(User user){
-        new UserAPIRepository.UpdateUserWithIdAsyncTask(userDao).execute(user);
+        new UpdateUserDBAsyncTask(userDao).execute(user);
     }
 
     public void insertApiUser(User user){
-        new UserAPIRepository.InsertOrUpdateUser(userDao).execute(user);
+        new InsertIfNotExistsDBUser(userDao).execute(user);
     }
 
-    public void reInitMessage(){
+    public void searchUserDB(User user){
+        new UserAPIRepository.SearchUserDBAsyncTask(userDao).execute(user);
+    }
+
+    public void reInitRepositoryVariables(){
         message.setValue("null");
+        searchedUser.setValue(null);
     }
 
     //constructor
@@ -115,16 +124,50 @@ public class UserAPIRepository {
         //Test
         message = new MutableLiveData<>("null");
 
+        searchedUser = new MutableLiveData<>();
+
         app = application;
 
     }
 
-    private class InsertOrUpdateUser extends AsyncTask<User,Void,Boolean>{
+    //Test
+    private class SearchUserDBAsyncTask extends AsyncTask<User,Void,Boolean>{
         private UserDao userDao;
         //private User resultUser;
         private User inputUser;
 
-        public InsertOrUpdateUser(UserDao userDao) {
+        public SearchUserDBAsyncTask(UserDao userDao) {
+            this.userDao = userDao;
+        }
+
+        @Override
+        protected Boolean doInBackground(User... users) {
+            inputUser = users[0];
+            //resultUser = userDao.getUserWithId(users[0].getId());
+            if(userDao.getUserWithId(inputUser.getId()) != null) {
+                return true;
+            }else {
+                return false;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            if(aBoolean){
+                searchedUser.setValue(inputUser);
+            }else{
+                searchedUser.setValue(null);
+            }
+        }
+    }
+
+
+    private class InsertIfNotExistsDBUser extends AsyncTask<User,Void,Boolean>{
+        private UserDao userDao;
+        //private User resultUser;
+        private User inputUser;
+
+        public InsertIfNotExistsDBUser(UserDao userDao) {
             this.userDao = userDao;
         }
 
@@ -141,9 +184,9 @@ public class UserAPIRepository {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             if (aBoolean){
-                update(inputUser);
+                //update(inputUser);
                 //Test
-                message.setValue("Updated User: " + inputUser.getId());
+                //message.setValue("Updated User: " + inputUser.getId());
             }else{
                 insert(inputUser);
                 //Test
@@ -152,10 +195,10 @@ public class UserAPIRepository {
         }
     }
 
-    private class InsertUserWithIdAsyncTask extends AsyncTask<User,Void,Void> {
+    private class InsertUserDBAsyncTask extends AsyncTask<User,Void,Void> {
         private UserDao userDao;
 
-        public InsertUserWithIdAsyncTask(UserDao userDao) {
+        public InsertUserDBAsyncTask(UserDao userDao) {
             this.userDao = userDao;
         }
 
@@ -163,6 +206,8 @@ public class UserAPIRepository {
         protected Void doInBackground(User... users) {
 
             userDao.insert(users[0]);
+
+            message.postValue("Saved User: " + users[0].getId());
             return null;
         }
 
@@ -172,18 +217,24 @@ public class UserAPIRepository {
         }
     }
 
-    private class UpdateUserWithIdAsyncTask extends AsyncTask<User,Void,Void> {
+    private class UpdateUserDBAsyncTask extends AsyncTask<User,Void,Void> {
         private UserDao userDao;
+        private User user;
 
-        public UpdateUserWithIdAsyncTask(UserDao userDao) {
+        public UpdateUserDBAsyncTask(UserDao userDao) {
             this.userDao = userDao;
         }
 
         @Override
         protected Void doInBackground(User... users) {
-
+            user = users[0];
             userDao.update(users[0]);
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            message.setValue("Updated User: " + user.getId());
         }
     }
 }
