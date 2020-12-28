@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,21 +21,29 @@ import com.bumptech.glide.request.RequestOptions;
 import com.keennhoward.mvvmrestdb.model.Data;
 import com.keennhoward.mvvmrestdb.room.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.MyViewHolder> {
+public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.MyViewHolder> implements Filterable {
 
     private onItemClicked listener;
     private Context context;
     private List<Data> userList;
 
+    //searchView
+    private List<Data> userListFull;
+
     public UserResultsAdapter(Context context, List<Data> userList) {
         this.context = context;
         this.userList = userList;
+
+        //userListFull = new ArrayList<Data>(userList);
     }
 
     public void setUserList(List<Data> userList) {
         this.userList = userList;
+
+        userListFull = new ArrayList<>(userList);
         notifyDataSetChanged();
     }
 
@@ -107,4 +117,39 @@ public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.
 
     public void setOnItemClickedListener(onItemClicked listener){this.listener = listener;}
 
+
+    @Override
+    public Filter getFilter() {
+        return userFilter;
+    }
+
+    private Filter userFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) { //works on the background thread
+
+            List<Data> filteredList = new ArrayList<>();
+
+            if(constraint == null || constraint.length() == 0){
+                filteredList.addAll(userListFull);
+            }else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for(Data data: userListFull){
+                    if(data.getFirst_name().toLowerCase().contains(filterPattern)){
+                        filteredList.add(data);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            userList.clear();
+            userList.addAll((List)results.values);
+            notifyDataSetChanged();
+        }
+    };
 }

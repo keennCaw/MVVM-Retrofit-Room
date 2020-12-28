@@ -1,11 +1,14 @@
 package com.keennhoward.mvvmrestdb.fragment;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
@@ -16,8 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +47,8 @@ public class UsersFragment extends Fragment {
 
     private User user;
 
+    private UserResultsAdapter userResultsAdapter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,7 +58,7 @@ public class UsersFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_users, container, false);
 
-        UserResultsAdapter userResultsAdapter = new UserResultsAdapter(v.getContext(), userList);
+        userResultsAdapter = new UserResultsAdapter(v.getContext(), userList);
 
         noResultTextView = v.findViewById(R.id.no_result_textView);
 
@@ -125,6 +136,7 @@ public class UsersFragment extends Fragment {
                 userViewModel.insertApiUser(user);
             }
         });
+        setHasOptionsMenu(true);
 
         return v;
     }
@@ -147,4 +159,64 @@ public class UsersFragment extends Fragment {
         return builder.create();
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.users_menu,menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setIconifiedByDefault(false);
+        Activity activity = getActivity();
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                return true;
+            }
+        });
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("TEST","rip");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                userResultsAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        //handle back button
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+
+        menu.findItem(R.id.action_search).setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                searchView.requestFocus();
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                searchView.setQuery("",false);
+                //on back pressed
+                View view = activity.getCurrentFocus();
+                if (view == null) {
+                    view = new View(activity);
+                }
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                return true;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 }
