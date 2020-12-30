@@ -1,5 +1,6 @@
 package com.keennhoward.mvvmrestdb.fragment;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -33,6 +37,7 @@ import java.util.List;
 public class SavedUsersFragment extends Fragment {
 
     private SavedUsersViewModel savedUsersViewModel;
+    private SavedUsersAdapter savedUsersAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,7 +50,7 @@ public class SavedUsersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(v.getContext()));
         recyclerView.setHasFixedSize(true);
 
-        final SavedUsersAdapter savedUsersAdapter = new SavedUsersAdapter(v.getContext());
+        savedUsersAdapter = new SavedUsersAdapter(v.getContext());
         recyclerView.setAdapter(savedUsersAdapter);
 
         savedUsersViewModel = new ViewModelProvider(getActivity(), ViewModelProvider.AndroidViewModelFactory.getInstance(getActivity().getApplication())).get(SavedUsersViewModel.class);
@@ -54,6 +59,7 @@ public class SavedUsersFragment extends Fragment {
             @Override
             public void onChanged(List<User> users) {
                 savedUsersAdapter.submitList(users);
+                savedUsersAdapter.setAdapterList(users);
             }
         });
 
@@ -66,6 +72,7 @@ public class SavedUsersFragment extends Fragment {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 savedUsersViewModel.delete(savedUsersAdapter.getUserAt(viewHolder.getAdapterPosition()));
+                getActivity().invalidateOptionsMenu();
                 Toast.makeText(getContext(), "User Deleted", Toast.LENGTH_SHORT).show();
             }
         }).attachToRecyclerView(recyclerView);
@@ -97,8 +104,54 @@ public class SavedUsersFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.saved_users_menu,menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setIconifiedByDefault(false);
+        Activity activity = getActivity();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d("TEST","rip");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                savedUsersAdapter.getFilter().filter(newText);
+                return false;
+            }
+
+        });
+
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+
+
+        menu.findItem(R.id.action_search).setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                searchView.requestFocus();
+                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                searchView.setQuery("",false);
+                //on back pressed
+                View view = activity.getCurrentFocus();
+                if (view == null) {
+                    view = new View(activity);
+                }
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                return true;
+            }
+        });
+
+
     }
 
     @Override

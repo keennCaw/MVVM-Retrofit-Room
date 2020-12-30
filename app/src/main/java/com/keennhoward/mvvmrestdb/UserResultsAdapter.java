@@ -135,7 +135,7 @@ public class UserResultsAdapter extends RecyclerView.Adapter<UserResultsAdapter.
                 String filterPattern = constraint.toString().toLowerCase().trim();
 
                 for(Data data: userListFull){
-                    if(data.getFirst_name().toLowerCase().contains(filterPattern)){
+                    if(data.getFirst_name().toLowerCase().startsWith(filterPattern)||data.getLast_name().toLowerCase().startsWith(filterPattern)||String.valueOf(data.getId()).startsWith(filterPattern)){
                         filteredList.add(data);
                     }
                 }

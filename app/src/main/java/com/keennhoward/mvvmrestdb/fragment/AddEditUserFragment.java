@@ -102,12 +102,16 @@ public class AddEditUserFragment extends Fragment {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(savedID == 0) {
-                    saveUser();
-                    Navigation.findNavController(v).navigate(R.id.navigateAddEditToSaved);
+                if(firstNameEditText.getText().toString().trim().isEmpty() || lastNameEditText.getText().toString().trim().isEmpty() || emailEditText.getText().toString().trim().isEmpty()){
+
                 }else {
-                    updateUser(savedID);
-                    Navigation.findNavController(v).navigate(R.id.navigateAddEditToSaved);
+                    if (savedID == 0) {
+                        saveUser();
+                        Navigation.findNavController(v).navigate(R.id.navigateAddEditToSaved);
+                    } else {
+                        updateUser(savedID);
+                        Navigation.findNavController(v).navigate(R.id.navigateAddEditToSaved);
+                    }
                 }
             }
         });

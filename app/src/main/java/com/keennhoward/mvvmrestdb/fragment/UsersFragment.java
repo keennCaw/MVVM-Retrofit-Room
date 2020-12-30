@@ -169,13 +169,6 @@ public class UsersFragment extends Fragment {
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
         searchView.setIconifiedByDefault(false);
         Activity activity = getActivity();
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                return true;
-            }
-        });
-
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
